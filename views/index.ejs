@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title %></title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+
+<div id="title_news" class="container-fluid" style="position: fixed; top: 0">
+  <div id="title"><h1><%= title %></h1></div>
+  <div id="username" displayname='<%= displayName %>'></div>
+  <p>Hi <%= displayName %> !</p>
+  <div id="news"></div>
+  <br>
+</div>
+
+
+<div class="scroll-row" id="messages">
+  <messages></messages>
+</div>
+
+<div id="msgsend" class="container" style="position: fixed; bottom: 0">
+  <form action="" class="input-group" style="margin-bottom:5px">
+    <input type="text" id="m" autocomplete="off" class="form-control" placeholder="message">
+    <span class="input-group-btn">
+      <button type="submit" class="btn btn-primary">Send</button>
+    </span>
+  </form>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.21/vue.js"></script> -->
+<script src="tag/messages.tag" type="riot/tag"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/riot/2.3.18/riot+compiler.min.js"></script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+    processEscapes: true
+    },
+  "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+<script>
+
+var chat = io.connect('<%= host %>/chat');
+var news = io.connect('<%= host %>/news');
+var scrollPosition = 1500;                                                    // スクロール位置
+
+// [1-1] 接続時の作業
+chat.on('connect', function() {
+  name = document.getElementById('username').getAttribute('displayname');     // 名前の取得
+  chat.emit('msg update', name);                                              // サーバ-からメッセージを取得
+});
+
+// [1-3] サーバーから受け取ったメッセージの表示
+chat.on('msg open', function(msg) {
+  if(msg.length == 0) {
+    console.log('message is empty!');
+    return;
+  } else {
+    // $('#messages').empty();
+    // $.each(msg, function(key, value) {
+    //   $('#messages').append($('<li>' + value.name + " : " + value.message + '</li>'));
+    //   MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                  // MathJaxをかける
+    // });
+    riot.mount('messages', {
+      items: msg
+    })
+    // MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                  // MathJaxをかける
+    // self.update();
+
+    $(function() {                                                            // 下までスクロール
+      $('body').delay(100).animate({
+        scrollTop: $(document).height()
+      },2000);
+    });
+  }
+});
+
+
+// [2-1] メッセージの送信
+$('form').submit(function(){
+  chat.emit('msg send', $('#m').val());                                       // サーバーに送る
+  $('#m').val('');                                                            // 入力襴をクリア
+  return false;
+});
+
+// [2-3] 追加したメッセージの表示
+chat.on('msg push', function(data){
+  date = new Date();
+  // message = data.name + " : " + xssFilters.inHTMLData(data.msg);
+  message = data.name + " : " + data.msg;
+  $('#messages').append($('<li>').text(message));
+  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                      // MathJaxをかける
+  $(function() {                                                              // 下までスクロール
+    $('body').delay(100).animate({
+      scrollTop: $(document).height()
+    },1500);
+  });
+});
+
+// [未実装] チャットデーターの削除
+chat.on('db drop', function() {
+  $('#message').empty();
+});
+
+// [3-2] ニュース襴の表示
+news.on('news_update', function(data) {
+  $('#news').text(data);
+});
+
+</script>
+</body>
+</html>
