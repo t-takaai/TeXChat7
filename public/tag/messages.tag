@@ -3,6 +3,35 @@
     <li each={ items }>{ name } : { message }</li>
   </ul>
 
-  this.items = opts.items;
-  MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                  // MathJaxをかける
+  var self = this;
+
+  // [1-2] データベースのメッセージ表示
+  chat.on('msg open', function(msg) {
+    if(msg.length == 0) {
+      console.log('message is empty!');
+      return;
+    } else {
+      self.items = msg;
+      self.update();
+      MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                    // MathJaxをかける
+    }
+  });
+
+  // [2-3] 追加したメッセージの表示
+  chat.on('msg push', function(data){
+    date = new Date();
+    self.items.push({ name: data.name, message: data.msg});
+    self.update();
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                    // MathJaxをかける
+  });
+
+  <!-- MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                        // MathJaxをかける -->
+  <!-- $(function() {                                                                // 下までスクロール
+    $('body').delay(100).animate({
+    scrollTop: $(document).height()
+    },1500);
+    setTimeout(function() {
+      window.scroll(0,$(document).height());
+    },0);
+  }); -->
 </messages>

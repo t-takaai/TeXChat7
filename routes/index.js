@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
   console.log("GET / req.user:", req.user);
   var displayName = "";
   if (req.user) {                                                               // resistered user
-    displayName = req.user.displayName;
+    displayName = req.user.displayName;                                         // set displayName
     res.render('index', {                                                       // jump to index.ejs
       title: "TeXChat",
       displayName: displayName,
