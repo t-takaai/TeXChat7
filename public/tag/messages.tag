@@ -1,17 +1,17 @@
 <messages>
   <ul>
-    <li each={ items }>{ name } : { message }</li>
+    <li each={ items }>{ moment(date).format('YYYY/MM/DD HH:mm:ss') } { name } : { message }</li>
   </ul>
 
   var self = this;
 
   // [1-2] データベースのメッセージ表示
-  chat.on('msg open', function(msg) {
-    if(msg.length == 0) {
+  chat.on('msg open', function(data) {
+    if(data.length == 0) {
       console.log('message is empty!');
       return;
     } else {
-      self.items = msg;
+      self.items = data;
       self.update();
       MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                    // MathJaxをかける
     }
@@ -19,13 +19,11 @@
 
   // [2-3] 追加したメッセージの表示
   chat.on('msg push', function(data){
-    date = new Date();
-    self.items.push({ name: data.name, message: data.msg});
+    self.items.push({ date: data.date, name: data.name, message: data.message});
     self.update();
-    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                    // MathJaxをかける
+    MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                      // MathJaxをかける
   });
 
-  <!-- MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                        // MathJaxをかける -->
   <!-- $(function() {                                                                // 下までスクロール
     $('body').delay(100).animate({
     scrollTop: $(document).height()
@@ -34,4 +32,5 @@
       window.scroll(0,$(document).height());
     },0);
   }); -->
+
 </messages>

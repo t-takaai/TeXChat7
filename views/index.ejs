@@ -15,22 +15,17 @@
   <div id="title"><h1><%= title %></h1></div>
   <div id="username" displayname='<%= displayName %>'></div>
   <p>Hi <%= displayName %> !</p>
-  <div id="news"></div>
+  <news></news>
   <br>
 </div>
 
 
-<div class="scroll-row" id="messages">
+<div class="scroll-row" id="message">
   <messages></messages>
 </div>
 
 <div id="msgsend" class="container" style="position: fixed; bottom: 0">
-  <form action="" class="input-group" style="margin-bottom:5px">
-    <input type="text" id="m" autocomplete="off" class="form-control" placeholder="message">
-    <span class="input-group-btn">
-      <button type="submit" class="btn btn-primary">Send</button>
-    </span>
-  </form>
+  <msgsend></msgsend>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -40,7 +35,10 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.21/vue.js"></script> -->
 <script src="tag/messages.tag" type="riot/tag"></script>
+<script src="tag/msgsend.tag" type="riot/tag"></script>
+<script src="tag/news.tag" type="riot/tag"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/2.3.18/riot+compiler.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
@@ -61,7 +59,7 @@
 var chat = io.connect('<%= host %>/chat');
 var news = io.connect('<%= host %>/news');
 
-riot.mount('messages');
+riot.mount('*');
 
 // [1-1] 接続時の作業
 chat.on('connect', function() {
@@ -69,22 +67,11 @@ chat.on('connect', function() {
   chat.emit('msg update', name);                                              // サーバ-からメッセージを取得
 });
 
-// [2-1] メッセージの送信
-$('form').submit(function(){
-  chat.emit('msg send', $('#m').val());                                       // サーバーに送る
-  $('#m').val('');                                                            // 入力襴をクリア
-  return false;
-});
 
 // [未実装] チャットデーターの削除
 // chat.on('db drop', function() {
 //   $('#message').empty();
 // });
-
-// [3-2] ニュース襴の表示
-news.on('news_update', function(data) {
-  $('#news').text(data);
-});
 
 </script>
 </body>
