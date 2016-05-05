@@ -1,7 +1,15 @@
 <messages>
   <ul>
-    <li each={ items }>{ moment(date).format('YYYY/MM/DD HH:mm:ss') } { name } : { message }</li>
+    <li each={ items }>
+      <div class="alert alert-success alert-dismissable">
+        <button class="close" data-dismiss="alert">&times;</button>
+        <div id="msgdate">{ moment(date).format('M/D HH:mm') }</div>{ name } : { message }
+      </div>
+    </li>
   </ul>
+  <style>
+    messages #msgdate { font-size: 70% }
+  </style>
 
   var self = this;
 
