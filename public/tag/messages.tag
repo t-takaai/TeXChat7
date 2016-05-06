@@ -1,8 +1,8 @@
 <messages>
   <ul>
     <li each={ items }>
-      <div class="alert alert-success alert-dismissable">
-        <button class="close" data-dismiss="alert">&times;</button>
+      <div>
+        <button onclick='{click}' type="button" class="close" aria-hidden="true">&times;</button>
         <div id="msgdate">{ moment(date).format('M/D HH:mm') }</div>{ name } : { message }
       </div>
     </li>
@@ -12,6 +12,11 @@
   </style>
 
   var self = this;
+
+  this.click = function(e) {
+    console.log(e.item._id + 'is clicked!');
+    chat.emit('msg_del', e.item._id);
+  };
 
   // [1-2] データベースのメッセージ表示
   chat.on('msg open', function(data) {
