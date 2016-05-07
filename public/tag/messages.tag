@@ -13,11 +13,6 @@
 
   var self = this;
 
-  this.click = function(e) {
-    console.log(e.item._id + 'is clicked!');
-    chat.emit('msg_del', e.item._id);
-  };
-
   // [1-2] データベースのメッセージ表示
   chat.on('msg open', function(data) {
     if(data.length == 0) {
@@ -36,6 +31,12 @@
     self.update();
     MathJax.Hub.Queue(["Typeset",MathJax.Hub,"messages"]);                      // MathJaxをかける
   });
+
+  // メッセージの削除
+  this.click = function(e) {
+    console.log(e.item._id + 'is clicked!');
+    chat.emit('msg_del', e.item._id);
+  };
 
   <!-- $(function() {                                                                // 下までスクロール
     $('body').delay(100).animate({

@@ -55,15 +55,20 @@ var skio = function (io) {
       });
     });
 
-    // [under construction] Delete messages in DB
+    // Delete messages in DB
     socket.on('msg_del', function(id) {
-      console.log(id + ' will be removed.');
-      Chat.remove({ _id: id }, function(err) {
-        if (err) { console.log(err); }
-      });
-      Chat.find(function(err, docs) {
-        socket.emit('msg open', docs);
-        socket.broadcast.emit('msg open', docs);
+      Chat.findById(id, function(err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          if (result.name === namestore[socket.id].name) {
+            result.remove();
+            Chat.find(function(err, docs) {
+              socket.emit('msg open', docs);
+              socket.broadcast.emit('msg open', docs);
+            });
+          }
+        }
       });
     });
 
