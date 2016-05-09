@@ -8,11 +8,13 @@ form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 
 #message li { padding: 5px 10px; }
 /*#message li { padding: 0px 0px; }*/
 #message li:nth-child(odd) { background: #eee; }
-#title_news { width: 100%; background-color: rgba(0, 120, 185, 1.0); opacity: 1.0; }
-#msgsend { width: 100%; }
+/*#title_news { width: 100%; background-color: rgba(0, 120, 185, 1.0); opacity: 1.0; }*/
+#title_news { background-color: rgba(0, 120, 185, 1.0); opacity: 1.0; }
+/*#msgsend { width: 100%; }*/
 #title { color: rgb(300, 100, 100); }
 .scroll-row {
-  margin: 11rem 1rem 5rem -3rem;
+  margin: 0rem 1rem 5rem -4rem;
   height: calc(100% - 8rem);
   background: white;
 }
+/**/

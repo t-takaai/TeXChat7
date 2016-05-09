@@ -1,6 +1,4 @@
-
 // dependencies
-// var xssFilters = require('xss-filters');
 var mongoose = require('mongoose');
 var chatjs = require('./models/chat.js');
 var dateutils = require('date-utils');
@@ -14,7 +12,7 @@ var Chat = conn2.model('Chat');
 
 var skio = function (io) {
 
-  var namestore = {};                                                           // ユーザー名一時格納場所
+  var namestore = {};                                                           // ユーザー名一時格納
 
   /**
   * chat
@@ -25,7 +23,7 @@ var skio = function (io) {
     // [1-2] メッセージの更新
     socket.on('msg update', function(name) {
       console.log('name is : ' + name);
-      namestore[socket.id] = { 'name': name };                                  // ユーザー名の一時格納
+      namestore[socket.id] = { 'name': name };                                  // ユーザー名一時格納
       Chat.find(function(err, docs) {
         socket.emit('msg open', docs);
       });
@@ -43,8 +41,8 @@ var skio = function (io) {
         message: msg
       };
       console.log('message: ' + msg);
-      socket.json.emit('msg push', data);
-      socket.json.broadcast.emit('msg push', data);
+      // socket.json.emit('msg push', data);
+      // socket.json.broadcast.emit('msg push', data);
       // Save to DB
       var chatdata = new Chat();
       chatdata.date = date;
@@ -52,6 +50,8 @@ var skio = function (io) {
       chatdata.name = name;
       chatdata.save(function(err) {
         if (err) { console.log(err); }
+        socket.json.emit('msg push', chatdata);
+        socket.json.broadcast.emit('msg push', chatdata);
       });
     });
 

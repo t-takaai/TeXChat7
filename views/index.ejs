@@ -11,68 +11,84 @@
 
 <body>
 
-<div id="title_news" class="container-fluid" style="position: fixed; top: 0">
-  <div id="title"><h1><%= title %></h1></div>
-  <div id="username" displayname='<%= displayName %>'></div>
-  <p>Hi <%= displayName %> !</p>
-  <news></news>
-  <br>
-</div>
+<div class="row">
 
+  <div class="col-sm-3 hidden-xs" style="background:rgb(0, 120, 185)">
 
-<div class="scroll-row" id="message">
-  <messages></messages>
-</div>
+    <!-- <div id="title_news" class="container-fluid" style="background:rgba(0, 120, 185, 1.0); position: fixed; top: 0"> -->
+    <div id="title_news" class="container-fluid" style="position: fixed; top: 0">
+      <!-- <div id="title_news" style="position: fixed; top: 0"> -->
+      <div id="title"><h1><%= title %></h1></div>
+      <div id="username" displayname='<%= displayName %>'></div>
+      <p>Hi <%= displayName %> !</p>
+      <news></news>
+      <br>
+    </div>
 
-<div id="msgsend" class="container" style="position: fixed; bottom: 0">
-  <msgsend></msgsend>
-</div>
+  </div>
 
-<script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js"></script>
-<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.21/vue.js"></script> -->
-<script src="tag/messages.tag" type="riot/tag"></script>
-<script src="tag/msgsend.tag" type="riot/tag"></script>
-<script src="tag/news.tag" type="riot/tag"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/riot/2.3.18/riot+compiler.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX", "output/HTML-CSS"],
-    tex2jax: {
-    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-    displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-    processEscapes: true
-    },
-  "HTML-CSS": { availableFonts: ["TeX"] }
+  <div class="col-sm-9 col-xs-12" style="background:white">
+
+    <!-- <div class="navbar navbar-default navbar-fixed-top">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="">Home</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="">Room 1</a></li>
+        <li><a href="">Room 2</a></li>
+      </ul>
+    </div> -->
+
+    <div class="scroll-row" id="message">
+      <messages></messages>
+    </div>
+
+    <!-- <div id="msgsend" class="container" style="position: fixed; bottom: 0"> -->
+    <div id="msgsend" style="position: fixed; bottom: 0">
+      <msgsend></msgsend>
+    </div>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js"></script>
+  <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script src="tag/messages.tag" type="riot/tag"></script>
+  <script src="tag/msgsend.tag" type="riot/tag"></script>
+  <script src="tag/news.tag" type="riot/tag"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/riot/2.3.18/riot+compiler.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      extensions: ["tex2jax.js"],
+      jax: ["input/TeX", "output/HTML-CSS"],
+      tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+      },
+    "HTML-CSS": { availableFonts: ["TeX"] }
+    });
+  </script>
+
+  <script>
+
+  var chat = io.connect('<%= host %>/chat');
+  var news = io.connect('<%= host %>/news');
+
+  riot.mount('*');
+
+  // [1-1] 接続時の作業
+  chat.on('connect', function() {
+    name = document.getElementById('username').getAttribute('displayname');     // 名前の取得
+    chat.emit('msg update', name);                                              // サーバ-からメッセージを取得
   });
-</script>
 
+  </script>
 
-<script>
-
-var chat = io.connect('<%= host %>/chat');
-var news = io.connect('<%= host %>/news');
-
-riot.mount('*');
-
-// [1-1] 接続時の作業
-chat.on('connect', function() {
-  name = document.getElementById('username').getAttribute('displayname');     // 名前の取得
-  chat.emit('msg update', name);                                              // サーバ-からメッセージを取得
-});
-
-
-// [未実装] チャットデーターの削除
-// chat.on('db drop', function() {
-//   $('#message').empty();
-// });
-
-</script>
+</div>
 </body>
 </html>
