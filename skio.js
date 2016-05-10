@@ -62,10 +62,12 @@ var skio = function (io) {
           console.log(err);
         } else {
           if (result.name === namestore[socket.id].name) {
-            result.remove();
-            Chat.find(function(err, docs) {
-              socket.emit('msg open', docs);
-              socket.broadcast.emit('msg open', docs);
+            result.remove(function (err, product) {
+                if (err) throw err;
+                Chat.find(function(err, docs) {
+                  socket.emit('msg open', docs);
+                  socket.broadcast.emit('msg open', docs);
+                });
             });
           }
         }
